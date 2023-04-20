@@ -16,7 +16,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#lastName').type('Freitas')
     cy.get('#email').type('luziane@exemplo.com')
     cy.get('#open-text-area').type(longText, { delay: 0 })
-    cy.get('button[type="submit"]').click()
+    cy.contains('button', 'Enviar').click()
     cy.get('.success').should('be.visible')
   })
 
@@ -27,7 +27,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#lastName').type('Freitas')
     cy.get('#email').type('luziane@exemplo.com')
     cy.get('#open-text-area').type(longText, { delay: 0 })
-    cy.get('button[type="submit"]').click()
+    cy.contains('button', 'Enviar').click()
     cy.get('.success').should('be.visible')
   })
 
@@ -36,7 +36,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#lastName').type('Freitas')
     cy.get('#email').type('luziane#exemplo.com')
     cy.get('#open-text-area').type('teste descrição')
-    cy.get('button[type="submit"]').click()
+    cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
   })
 
@@ -44,6 +44,53 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('#phone')
       .type('ajhdhfgsvdtsda')
       .should('have.value', '')
+  })
+
+  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', function() {
+    cy.get('#firstName').type('Luziane')
+    cy.get('#lastName').type('Freitas')
+    cy.get('#email').type('luziane@exemplo.com')
+    cy.get('#phone-checkbox').click()
+    cy.get('#open-text-area').type('teste descrição')
+    cy.contains('button', 'Enviar').click()
+    cy.get('.error').should('be.visible')
+  })
+
+  it('preenche e limpa os campos nome, sobrenome, email e telefone', function() {
+    cy.get('#firstName')
+      .type('Luziane')
+      .should('have.value','Luziane')
+      .clear()
+      .should('have.value', '')
+  
+    cy.get('#lastName')
+      .type('Freitas')
+      .should('have.value','Freitas')
+      .clear()
+      .should('have.value', '')
+
+    cy.get('#email')
+      .type('luziane@exemplo.com')
+      .should('have.value','luziane@exemplo.com')
+      .clear()
+      .should('have.value', '')
+
+    cy.get('#phone')
+      .type(9999999999999)
+      .should('have.value',9999999999999)
+      .clear()
+      .should('have.value', '')
+  })
+
+  it('exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios.', function() {
+    cy.contains('button', 'Enviar').click()
+    cy.get('.error').should('be.visible')
+  })
+
+  it('envia o formuário com sucesso usando um comando customizado', function() {
+    cy.fillMandatoryFieldsAndSubmit()
+
+    cy.get('.success').should('be.visible')
   })
 })
 
